@@ -6,7 +6,7 @@ const app = express();
 const port = 3000;
 
 // MongoDB connection URI
-const uri = "mongodb+srv://test-user:Password12345!@rwmdb.yr8tjx9.mongodb.net/?retryWrites=true&w=majority&appName=rwmdb"; // Replace with your MongoDB connection URI
+const uri = "mongodb+srv://view-test:iHda77x4R1ZApdhe@rwmdb.yr8tjx9.mongodb.net/?retryWrites=true&w=majority&appName=rwmdb"; // Replace with your MongoDB connection URI
 
 // Middleware
 app.use(express.json());
