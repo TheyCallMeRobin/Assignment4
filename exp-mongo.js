@@ -27,18 +27,21 @@ async function connectToDB() {
 }
 connectToDB();
 
+// Styling
+const buttonStyle = "background-color: #007bff; color: #fff; padding: 10px 20px; border: none; cursor: pointer; margin-right: 10px;";
+
 // Default route
 app.get('/', function(req, res) {
     if (req.cookies.authenticated) {
-        res.send('Authentication cookie exists. Value: ' + req.cookies.authenticated + '<br><a href="/cookies">View Cookies</a>');
+        res.send('<div style="font-family: Arial; color: #333;">Authentication cookie exists. Value: ' + req.cookies.authenticated + '<br><button style="' + buttonStyle + '" onclick="location.href=\'/cookies\'">View Cookies</button></div>');
     } else {
-        res.send('<a href="/login">Login</a> | <a href="/register">Register</a>');
+        res.send('<div style="font-family: Arial; color: #333;"><button style="' + buttonStyle + '" onclick="location.href=\'/login\'">Login</button><button style="' + buttonStyle + '" onclick="location.href=\'/register\'">Register</button></div>');
     }
 });
 
 // Registration route
 app.get('/register', function(req, res) {
-    res.send('<form action="/register" method="post"><input type="text" name="userID" placeholder="User ID"><br><input type="password" name="password" placeholder="Password"><br><input type="submit" value="Register"></form>');
+    res.send('<div style="font-family: Arial; color: #333;"><form action="/register" method="post"><input type="text" name="userID" placeholder="User ID" style="margin-bottom: 10px;"><br><input type="password" name="password" placeholder="Password" style="margin-bottom: 10px;"><br><button style="' + buttonStyle + '" type="submit">Register</button></form></div>');
 });
 
 app.post('/register', async function(req, res) {
@@ -48,16 +51,16 @@ app.post('/register', async function(req, res) {
 
     try {
         await collection.insertOne({ userID, password });
-        res.send('Registration successful!<br><a href="/">Go back to home</a>');
+        res.send('<div style="font-family: Arial; color: #333;">Registration successful!<br><button style="' + buttonStyle + '" onclick="location.href=\'/\'">Go back to home</button></div>');
     } catch (err) {
         console.error("Error registering user:", err);
-        res.send('Error registering user');
+        res.send('<div style="font-family: Arial; color: #333;">Error registering user<br><button style="' + buttonStyle + '" onclick="location.href=\'/register\'">Try again</button></div>');
     }
 });
 
 // Login route
 app.get('/login', function(req, res) {
-    res.send('<form action="/login" method="post"><input type="text" name="userID" placeholder="User ID"><br><input type="password" name="password" placeholder="Password"><br><input type="submit" value="Login"></form>');
+    res.send('<div style="font-family: Arial; color: #333;"><form action="/login" method="post"><input type="text" name="userID" placeholder="User ID" style="margin-bottom: 10px;"><br><input type="password" name="password" placeholder="Password" style="margin-bottom: 10px;"><br><button style="' + buttonStyle + '" type="submit">Login</button></form></div>');
 });
 
 app.post('/login', async function(req, res) {
@@ -68,21 +71,21 @@ app.post('/login', async function(req, res) {
     const user = await collection.findOne({ userID, password });
     if (user) {
         res.cookie('authenticated', userID, { maxAge: 60000 }); // Set cookie for 1 minute
-        res.send('Login successful!<br><a href="/">Go back to home</a>');
+        res.send('<div style="font-family: Arial; color: #333;">Login successful!<br><button style="' + buttonStyle + '" onclick="location.href=\'/\'">Go back to home</button></div>');
     } else {
-        res.send('Invalid credentials. <a href="/">Go back to home</a>');
+        res.send('<div style="font-family: Arial; color: #333;">Invalid credentials<br><button style="' + buttonStyle + '" onclick="location.href=\'/login\'">Try again</button></div>');
     }
 });
 
 // Endpoint to view all cookies
 app.get('/cookies', function(req, res) {
-    res.send('Active Cookies: ' + JSON.stringify(req.cookies) + '<br><a href="/clear-cookies">Clear Cookies</a>');
+    res.send('<div style="font-family: Arial; color: #333;">Active Cookies: ' + JSON.stringify(req.cookies) + '<br><button style="' + buttonStyle + '" onclick="location.href=\'/clear-cookies\'">Clear Cookies</button></div>');
 });
 
 // Endpoint to clear all cookies
 app.get('/clear-cookies', function(req, res) {
     res.clearCookie('authenticated');
-    res.send('Cookies cleared successfully.<br><a href="/">Go back to home</a>');
+    res.send('<div style="font-family: Arial; color: #333;">Cookies cleared successfully.<br><button style="' + buttonStyle + '" onclick="location.href=\'/\'">Go back to home</button></div>');
 });
 
 // Server start
