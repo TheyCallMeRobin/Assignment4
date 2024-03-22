@@ -1,10 +1,24 @@
 {
+  "name": "rwexp-mongo",
+  "verson": "1.0.0",
+  "description": "RWs Express Mongo Authentication Deploy on Render",
+  "main": "exp-mongo.js",
+  "repository": "https://github.com/TheyCallMeRobin/Assignment4",
+  "author": "RW",
+  "license": "MIT",
+  "private": "false",
+  "scripts": {
+    "start": "node exp-mongo.js"
+  },
   "dependencies": {
     "body-parser": "^2.0.0-beta.2",
     "cookie": "^0.6.0",
     "cookie-parser": "^1.4.6",
     "express": "^5.0.0-beta.2",
-    "mongoose": "^8.2.2",
-    "node": "^21.7.1"
+    "mongoose": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=14"
   }
+
 }
