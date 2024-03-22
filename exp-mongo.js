@@ -27,40 +27,53 @@ async function connectToDB() {
 }
 connectToDB();
 
-// Styling
-const buttonStyle = "background-color: #007bff; color: #fff; padding: 10px 20px; border: none; cursor: pointer; margin-right: 10px;";
-
 // Default route
 app.get('/', function(req, res) {
     if (req.cookies.authenticated) {
-        res.send('<div style="font-family: Arial; color: #333;">Authentication cookie exists. Value: ' + req.cookies.authenticated + '<br><button style="' + buttonStyle + '" onclick="location.href=\'/cookies\'">View Cookies</button></div>');
+        res.send('Authentication cookie exists. Value: ' + req.cookies.authenticated + '<br><button onclick="window.location.href=\'/cookies\'">View Cookies</button>');
     } else {
-        res.send('<div style="font-family: Arial; color: #333;"><button style="' + buttonStyle + '" onclick="location.href=\'/login\'">Login</button><button style="' + buttonStyle + '" onclick="location.href=\'/register\'">Register</button></div>');
+        res.send('<button onclick="window.location.href=\'/login\'">Login</button> | <button onclick="window.location.href=\'/register\'">Register</button>');
     }
 });
 
 // Registration route
 app.get('/register', function(req, res) {
-    res.send('<div style="font-family: Arial; color: #333;"><form action="/register" method="post"><input type="text" name="userID" placeholder="User ID" style="margin-bottom: 10px;"><br><input type="password" name="password" placeholder="Password" style="margin-bottom: 10px;"><br><button style="' + buttonStyle + '" type="submit">Register</button></form></div>');
+    res.send(`
+        <form action="/register" method="post">
+            <input type="text" name="userID" placeholder="User ID" required><br>
+            <input type="password" name="password" placeholder="Password" required><br>
+            <input type="submit" value="Register">
+        </form>
+    `);
 });
 
 app.post('/register', async function(req, res) {
     const { userID, password } = req.body;
+    if (!userID || !password) {
+        return res.status(400).send('User ID and password are required');
+    }
+
     const database = client.db('authenticate'); // database name
     const collection = database.collection('assignment4'); // collection name
 
     try {
         await collection.insertOne({ userID, password });
-        res.send('<div style="font-family: Arial; color: #333;">Registration successful!<br><button style="' + buttonStyle + '" onclick="location.href=\'/\'">Go back to home</button></div>');
+        res.send('Registration successful!<br><button onclick="window.location.href=\'/\'">Go back to home</button>');
     } catch (err) {
         console.error("Error registering user:", err);
-        res.send('<div style="font-family: Arial; color: #333;">Error registering user<br><button style="' + buttonStyle + '" onclick="location.href=\'/register\'">Try again</button></div>');
+        res.send('Error registering user');
     }
 });
 
 // Login route
 app.get('/login', function(req, res) {
-    res.send('<div style="font-family: Arial; color: #333;"><form action="/login" method="post"><input type="text" name="userID" placeholder="User ID" style="margin-bottom: 10px;"><br><input type="password" name="password" placeholder="Password" style="margin-bottom: 10px;"><br><button style="' + buttonStyle + '" type="submit">Login</button></form></div>');
+    res.send(`
+        <form action="/login" method="post">
+            <input type="text" name="userID" placeholder="User ID"><br>
+            <input type="password" name="password" placeholder="Password"><br>
+            <input type="submit" value="Login">
+        </form>
+    `);
 });
 
 app.post('/login', async function(req, res) {
@@ -71,21 +84,21 @@ app.post('/login', async function(req, res) {
     const user = await collection.findOne({ userID, password });
     if (user) {
         res.cookie('authenticated', userID, { maxAge: 60000 }); // Set cookie for 1 minute
-        res.send('<div style="font-family: Arial; color: #333;">Login successful!<br><button style="' + buttonStyle + '" onclick="location.href=\'/\'">Go back to home</button></div>');
+        res.send('Login successful!<br><button onclick="window.location.href=\'/\'">Go back to home</button>');
     } else {
-        res.send('<div style="font-family: Arial; color: #333;">Invalid credentials<br><button style="' + buttonStyle + '" onclick="location.href=\'/login\'">Try again</button></div>');
+        res.send('Invalid credentials. <button onclick="window.location.href=\'/\'">Go back to home</button>');
     }
 });
 
 // Endpoint to view all cookies
 app.get('/cookies', function(req, res) {
-    res.send('<div style="font-family: Arial; color: #333;">Active Cookies: ' + JSON.stringify(req.cookies) + '<br><button style="' + buttonStyle + '" onclick="location.href=\'/clear-cookies\'">Clear Cookies</button></div>');
+    res.send('Active Cookies: ' + JSON.stringify(req.cookies) + '<br><button onclick="window.location.href=\'/clear-cookies\'">Clear Cookies</button>');
 });
 
 // Endpoint to clear all cookies
 app.get('/clear-cookies', function(req, res) {
     res.clearCookie('authenticated');
-    res.send('<div style="font-family: Arial; color: #333;">Cookies cleared successfully.<br><button style="' + buttonStyle + '" onclick="location.href=\'/\'">Go back to home</button></div>');
+    res.send('Cookies cleared successfully.<br><button onclick="window.location.href=\'/\'">Go back to home</button>');
 });
 
 // Server start
