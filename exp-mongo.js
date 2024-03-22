@@ -6,7 +6,7 @@ const app = express();
 const port = 3000;
 
 // MongoDB connection URI
-const uri = "mongodb+srv://view-test:iHda77x4R1ZApdhe@rwmdb.yr8tjx9.mongodb.net/?retryWrites=true&w=majority&appName=rwmdb"; // Replace with your MongoDB connection URI
+const uri = "mongodb+srv://view-test:iHda77x4R1ZApdhe@rwmdb.yr8tjx9.mongodb.net/?retryWrites=true&w=majority&appName=rwmdb"; // MongoDB connection URI
 
 // Middleware
 app.use(express.json());
@@ -43,8 +43,8 @@ app.get('/register', function(req, res) {
 
 app.post('/register', async function(req, res) {
     const { userID, password } = req.body;
-    const database = client.db('your_database_name'); // Replace with your database name
-    const collection = database.collection('users'); // Replace with your collection name
+    const database = client.db('authenticate'); // database name
+    const collection = database.collection('assignment4'); // collection name
 
     try {
         await collection.insertOne({ userID, password });
@@ -62,8 +62,8 @@ app.get('/login', function(req, res) {
 
 app.post('/login', async function(req, res) {
     const { userID, password } = req.body;
-    const database = client.db('your_database_name'); // Replace with your database name
-    const collection = database.collection('users'); // Replace with your collection name
+    const database = client.db('authenticate'); // database name
+    const collection = database.collection('assignment4'); // collection name
 
     const user = await collection.findOne({ userID, password });
     if (user) {
