@@ -5,7 +5,7 @@ const { MongoClient } = require("mongodb");
 const app = express();
 const port = 3000;
 
-// MongoDB connection URI
+// MongoDB connection URI T1-REF1
 const uri = "mongodb+srv://view-test:iHda77x4R1ZApdhe@rwmdb.yr8tjx9.mongodb.net/?retryWrites=true&w=majority&appName=rwmdb"; // MongoDB connection URI
 
 // Middleware
@@ -13,10 +13,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// MongoDB Client
+// MongoDB Client T1-REF2
 const client = new MongoClient(uri);
 
-// Connect to MongoDB
+// Connect to MongoDB T1-REF3
 async function connectToDB() {
     try {
         await client.connect();
@@ -27,16 +27,16 @@ async function connectToDB() {
 }
 connectToDB();
 
-// Default route
+// Default route T3.2-REF1
 app.get('/', function(req, res) {
     if (req.cookies.authenticated) {
-        res.send('Authentication cookie exists. Value: ' + req.cookies.authenticated + '<br><button onclick="window.location.href=\'/cookies\'">View Cookies</button>');
+       res.redirect('/home'); 
     } else {
-        res.send('<button onclick="window.location.href=\'/login\'">Login</button> | <button onclick="window.location.href=\'/register\'">Register</button>');
+        res.send('<button onclick="window.location.href=\'/login\'">Login</button> | <button onclick="window.location.href=\'/register\'">Register</button>');       
     }
 });
 
-// Registration route
+// Registration route T2-REF1
 app.get('/register', function(req, res) {
     res.send(`
         <form action="/register" method="post">
@@ -46,7 +46,7 @@ app.get('/register', function(req, res) {
         </form>
     `);
 });
-
+// Registration error handling to require user name and password to move on T2-REF2
 app.post('/register', async function(req, res) {
     const { userID, password } = req.body;
     if (!userID || !password) {
@@ -65,7 +65,7 @@ app.post('/register', async function(req, res) {
     }
 });
 
-// Login route
+// Login route 
 app.get('/login', function(req, res) {
     res.send(`
         <form action="/login" method="post">
@@ -83,19 +83,34 @@ app.post('/login', async function(req, res) {
 
     const user = await collection.findOne({ userID, password });
     if (user) {
-        res.cookie('authenticated', userID, { maxAge: 60000 }); // Set cookie for 1 minute
-        res.send('Login successful!<br><button onclick="window.location.href=\'/\'">Go back to home</button>');
+        res.cookie('authenticated', userID, { maxAge: 60000 }); // Set cookie for 1 minute 
+        res.redirect('/success');        
     } else {
-        res.send('Invalid credentials. <button onclick="window.location.href=\'/\'">Go back to home</button>');
+        res.redirect('/failure');
     }
 });
 
-// Endpoint to view all cookies
+// Endpoint to view Home Page route
+app.get('/home', function(req, res){
+    res.send('Authentication cookie exists. Value: ' + req.cookies.authenticated + '<br><button onclick="window.location.href=\'/cookies\'">View Cookies</button>');
+});
+
+// Endpoint to view Success route T3.2-REF2
+app.get('/success', function(req, res){
+    res.send('Login successful!<br><button onclick="window.location.href=\'/\'">Go back to home</button>'); 
+});
+
+// Endpoint to view Failure route T3.1-REF1
+app.get('/failure', function(req, res){
+    res.send('Invalid credentials. <button onclick="window.location.href=\'/\'">Go back to home</button>'); 
+}); 
+
+// Endpoint to view all cookies T4-REF1
 app.get('/cookies', function(req, res) {
     res.send('Active Cookies: ' + JSON.stringify(req.cookies) + '<br><button onclick="window.location.href=\'/clear-cookies\'">Clear Cookies</button>');
 });
 
-// Endpoint to clear all cookies
+// Endpoint to clear all cookies T5-REF1
 app.get('/clear-cookies', function(req, res) {
     res.clearCookie('authenticated');
     res.send('Cookies cleared successfully.<br><button onclick="window.location.href=\'/\'">Go back to home</button>');
